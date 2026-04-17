@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kamera Seru | Alternatif Webcam Toy</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --accent-color: #e91e63;
+            --accent-hover: #c2185b;
+            --surface-color: #242424;
+        }
+
+        body { 
+            background: var(--bg-color); 
+            color: white; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            text-align: center; 
+            margin: 0;
+            padding: 0;
+        }
+
+        .container { 
+            max-width: 900px; 
+            margin: 0 auto; 
+            padding: 30px 20px; 
+        }
+
+        h1 { margin-top: 0; font-size: 2.5rem; letter-spacing: 1px; }
+        p { color: #aaaaaa; margin-bottom: 30px; }
+
+        /* Area Kamera */
+        .camera-wrapper {
+            position: relative;
+            display: inline-block;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            background: #000;
+        }
+
+        canvas { 
+            display: block;
+            width: 100%; 
+            max-width: 640px; 
+            transition: opacity 0.1s; /* Untuk efek flash kamera */
+        }
+
+        /* Kontrol Efek dan Tombol */
+        .controls { 
+            margin-top: 25px; 
+            display: flex; 
+            justify-content: center; 
+            flex-wrap: wrap;
+            gap: 15px; 
+        }
+
+        select, button { 
+            padding: 12px 24px; 
+            font-size: 16px; 
+            border-radius: 8px; 
+            border: none; 
+            cursor: pointer; 
+            outline: none;
+        }
+
+        select { 
+            background: var(--surface-color); 
+            color: white; 
+            border: 2px solid #444;
+            appearance: none;
+        }
+
+        select:focus { border-color: var(--accent-color); }
+
+        button { 
+            background: var(--accent-color); 
+            color: white; 
+            font-weight: bold; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4);
+            transition: all 0.3s ease; 
+        }
+
+        button:hover { 
+            background: var(--accent-hover); 
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        /* Galeri Foto */
+        .gallery-container {
+            margin-top: 40px;
+            text-align: left;
+        }
+
+        .gallery-container h3 { border-bottom: 2px solid var(--surface-color); padding-bottom: 10px; }
+
+        .gallery { 
+            display: flex; 
+            gap: 15px; 
+            overflow-x: auto; 
+            padding-bottom: 15px; 
+        }
+
+        .gallery img { 
+            height: 120px; 
+            border-radius: 8px; 
+            border: 3px solid var(--surface-color); 
+            transition: transform 0.3s;
+        }
+
+        .gallery img:hover { transform: scale(1.05); }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Kamera Seru 📸</h1>
+        <p>Pilih efek favoritmu dan ambil momen terbaik!</p>
+        
+        <video id="video" autoplay playsinline style="display: none;"></video>
+        
+        <div class="camera-wrapper">
+            <canvas id="canvas" width="640" height="480"></canvas>
+        </div>
+        
+        <div class="controls">
+            <select id="effect-selector">
+                <option value="none">Normal</option>
+                <option value="grayscale(100%)">Hitam Putih</option>
+                <option value="sepia(100%)">Sepia / Klasik</option>
+                <option value="invert(100%)">Invert / Negatif</option>
+                <option value="hue-rotate(90deg)">Alien (Hue 90)</option>
+                <option value="hue-rotate(180deg)">Neon (Hue 180)</option>
+                <option value="brightness(150%)">Terang Benderang</option>
+                <option value="contrast(200%)">Kontras Tinggi</option>
+                <option value="saturate(300%)">Super Berwarna</option>
+                <option value="blur(5px)">Misterius (Blur)</option>
+                <option value="sepia(100%) hue-rotate(190deg) saturate(200%)">Retro Sci-Fi</option>
+            </select>
+            <button id="snap-btn">Ambil Foto!</button>
+        </div>
+
+        <div class="gallery-container">
+            <h3>Galeri Fotomu</h3>
+            <div class="gallery" id="gallery">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const effectSelector = document.getElementById('effect-selector');
+        const snapBtn = document.getElementById('snap-btn');
+        const gallery = document.getElementById('gallery');
+
+        let currentEffect = 'none';
+
+        // 1. Meminta izin akses kamera
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+            .then(stream => {
+                video.srcObject = stream;
+                video.play();
+                drawToCanvas(); // Mulai menggambar ke canvas
+            })
+            .catch(err => {
+                console.error("Kamera tidak dapat diakses:", err);
+                alert("Tolong izinkan akses kamera pada browser Anda untuk menggunakan website ini.");
+            });
+
+        // 2. Mengganti efek saat dropdown dipilih
+        effectSelector.addEventListener('change', (e) => {
+            currentEffect = e.target.value;
+        });
+
+        // 3. Menggambar video ke canvas terus menerus (60fps)
+        function drawToCanvas() {
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                // Balik gambar agar berfungsi seperti cermin (mirror)
+                ctx.save();
+                ctx.translate(canvas.width, 0);
+                ctx.scale(-1, 1);
+                
+                // Aplikasikan efek CSS Filters langsung ke kanvas
+                ctx.filter = currentEffect;
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                ctx.restore();
+            }
+            // Ulangi fungsi ini secara rekursif
+            requestAnimationFrame(drawToCanvas);
+        }
+
+        // 4. Proses pengambilan foto
+        snapBtn.addEventListener('click', () => {
+            // Memberikan efek "Flash" sederhana pada kanvas
+            canvas.style.opacity = '0';
+            setTimeout(() => { canvas.style.opacity = '1'; }, 100);
+
+            // Mengonversi kanvas saat ini menjadi format gambar (PNG)
+            const dataURL = canvas.toDataURL('image/png');
+            
+            // Menampilkan gambar di area galeri bawah
+            const imgElement = document.createElement('img');
+            imgElement.src = dataURL;
+            gallery.prepend(imgElement);
+
+            // (Opsional) Mengunduh gambar secara otomatis ke laptop/HP pengguna
+            const downloadLink = document.createElement('a');
+            downloadLink.download = 'Momen-Seru-' + new Date().getTime() + '.png';
+            downloadLink.href = dataURL;
+            downloadLink.click();
+        });
+    </script>
+</body>
+</html>
