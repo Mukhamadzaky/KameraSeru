@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -6,130 +6,365 @@
     <title>Kamera Seru | Alternatif Webcam Toy</title>
     <style>
         :root {
-            --bg-color: #121212;
-            --accent-color: #e91e63;
-            --accent-hover: #c2185b;
-            --surface-color: #242424;
+            --bg-color: #09090f;
+            --surface-color: #1f1f2a;
+            --surface-strong: #27273b;
+            --text-muted: #b1b1c2;
+            --accent-color: #ff4d77;
+            --accent-hover: #ff2b66;
+            --border-color: rgba(255, 77, 119, 0.12);
+            --shadow-glow: 0 18px 40px rgba(0, 0, 0, 0.35);
+            --shadow-soft: 0 10px 25px rgba(0, 0, 0, 0.25);
         }
 
-        body { 
-            background: var(--bg-color); 
-            color: white; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            text-align: center; 
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: radial-gradient(circle at top, rgba(255, 77, 119, 0.12), transparent 26%), linear-gradient(180deg, #111118 0%, #0b0b11 100%);
+            color: #f5f5f7;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
         }
 
-        .container { 
-            max-width: 900px; 
-            margin: 0 auto; 
-            padding: 30px 20px; 
+        body::selection {
+            background: rgba(255, 77, 119, 0.35);
+            color: white;
         }
 
-        h1 { margin-top: 0; font-size: 2.5rem; letter-spacing: 1px; }
-        p { color: #aaaaaa; margin-bottom: 30px; }
+        .container {
+            max-width: 1040px;
+            margin: 0 auto;
+            padding: 32px 24px 48px;
+        }
 
-        /* Area Kamera */
+        header {
+            text-align: center;
+            margin-bottom: 34px;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255,255,255,0.05);
+            padding: 10px 18px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #fff;
+            font-weight: 600;
+        }
+
+        h1 {
+            margin: 18px auto 12px;
+            font-size: clamp(2.4rem, 4vw, 3.4rem);
+            letter-spacing: 0.08em;
+            line-height: 1.05;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.75;
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        .hero-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-top: 28px;
+        }
+
+        .hero-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 18px;
+            padding: 22px;
+            text-align: left;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .hero-card strong {
+            display: block;
+            margin-bottom: 10px;
+            color: white;
+            font-size: 1.06rem;
+        }
+
+        .hero-card span {
+            color: var(--text-muted);
+            font-size: 0.96rem;
+            line-height: 1.7;
+        }
+
         .camera-wrapper {
             position: relative;
-            display: inline-block;
-            border-radius: 12px;
+            margin: 0 auto;
+            max-width: 720px;
+            border-radius: 26px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            background: #000;
+            box-shadow: var(--shadow-glow);
+            border: 1px solid rgba(255,255,255,0.08);
+            background: #020205;
         }
 
-        canvas { 
-            display: block;
-            width: 100%; 
-            max-width: 640px; 
-            transition: opacity 0.1s; /* Untuk efek flash kamera */
-        }
-
-        /* Kontrol Efek dan Tombol */
-        .controls { 
-            margin-top: 25px; 
-            display: flex; 
-            justify-content: center; 
-            flex-wrap: wrap;
-            gap: 15px; 
-        }
-
-        select, button { 
-            padding: 12px 24px; 
-            font-size: 16px; 
-            border-radius: 8px; 
-            border: none; 
-            cursor: pointer; 
-            outline: none;
-        }
-
-        select { 
-            background: var(--surface-color); 
-            color: white; 
-            border: 2px solid #444;
-            appearance: none;
-        }
-
-        select:focus { border-color: var(--accent-color); }
-
-        button { 
-            background: var(--accent-color); 
-            color: white; 
-            font-weight: bold; 
+        .camera-label {
+            position: absolute;
+            left: 16px;
+            top: 16px;
+            z-index: 1;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            font-size: 0.92rem;
+            letter-spacing: 0.04em;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4);
-            transition: all 0.3s ease; 
         }
 
-        button:hover { 
-            background: var(--accent-hover); 
+        .status-bar {
+            position: absolute;
+            right: 16px;
+            top: 16px;
+            z-index: 1;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.08);
+            color: #ddd;
+            font-size: 0.88rem;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            min-height: 420px;
+            background: #020202;
+            transition: opacity 0.14s ease;
+        }
+
+        .controls {
+            margin-top: 28px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        select,
+        button {
+            appearance: none;
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 14px;
+            outline: none;
+            color: white;
+        }
+
+        select {
+            min-width: 220px;
+            padding: 14px 18px;
+            background: rgba(255,255,255,0.04);
+            font-size: 0.98rem;
+        }
+
+        select:focus {
+            border-color: rgba(255,77,119,0.6);
+        }
+
+        button {
+            padding: 14px 22px;
+            background: linear-gradient(135deg, var(--accent-color), #ff0070);
+            box-shadow: 0 12px 30px rgba(255,77,119,0.28);
+            font-size: 0.98rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        button:hover {
             transform: translateY(-2px);
+            background: linear-gradient(135deg, #ff2b66, #ff0066);
         }
 
-        button:active {
-            transform: translateY(1px);
+        button.secondary {
+            background: rgba(255,255,255,0.06);
+            color: #f2f2f7;
+            box-shadow: none;
         }
 
-        /* Galeri Foto */
-        .gallery-container {
-            margin-top: 40px;
+        button.secondary:hover {
+            background: rgba(255,255,255,0.12);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            margin-top: 36px;
+        }
+
+        .feature-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 22px;
+            box-shadow: var(--shadow-soft);
             text-align: left;
         }
 
-        .gallery-container h3 { border-bottom: 2px solid var(--surface-color); padding-bottom: 10px; }
-
-        .gallery { 
-            display: flex; 
-            gap: 15px; 
-            overflow-x: auto; 
-            padding-bottom: 15px; 
+        .feature-card h3 {
+            font-size: 1.1rem;
+            margin: 0 0 10px;
+            color: #fff;
         }
 
-        .gallery img { 
-            height: 120px; 
-            border-radius: 8px; 
-            border: 3px solid var(--surface-color); 
-            transition: transform 0.3s;
+        .feature-card p {
+            margin: 0;
+            color: var(--text-muted);
+            line-height: 1.7;
         }
 
-        .gallery img:hover { transform: scale(1.05); }
+        .panel {
+            margin-top: 40px;
+            display: grid;
+            grid-template-columns: 1.4fr 0.9fr;
+            gap: 26px;
+        }
 
+        .panel-left,
+        .panel-right {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            padding: 24px;
+        }
+
+        .panel-left h2,
+        .panel-right h2,
+        .gallery-container h3 {
+            margin-top: 0;
+            font-size: 1.3rem;
+            color: white;
+        }
+
+        .steps {
+            display: grid;
+            gap: 14px;
+            margin-top: 14px;
+        }
+
+        .step {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 18px;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        .step strong {
+            display: block;
+            margin-bottom: 6px;
+            color: #fff;
+        }
+
+        .tips {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            gap: 12px;
+        }
+
+        .tips li {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 14px 16px;
+            color: var(--text-muted);
+        }
+
+        .tips li::before {
+            content: '•';
+            margin-right: 10px;
+            color: var(--accent-color);
+        }
+
+        .gallery-container {
+            margin-top: 0;
+        }
+
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 18px;
+            justify-content: flex-start;
+        }
+
+        .gallery img {
+            width: 168px;
+            height: 118px;
+            object-fit: cover;
+            border-radius: 16px;
+            border: 2px solid rgba(255,255,255,0.08);
+            box-shadow: 0 16px 30px rgba(0,0,0,0.18);
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+
+        .gallery img:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255,77,119,0.35);
+        }
+
+        .promo-strip {
+            margin-top: 38px;
+            padding: 20px 22px;
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: linear-gradient(135deg, rgba(255,77,119,0.12), rgba(255,255,255,0.04));
+        }
+
+        .promo-strip p {
+            margin: 0;
+            color: #dcdce4;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 820px) {
+            .panel {
+                grid-template-columns: 1fr;
+            }
+
+            .camera-wrapper {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Kamera Seru 📸</h1>
-        <p>Pilih efek favoritmu dan ambil momen terbaik!</p>
-        
-        <video id="video" autoplay playsinline style="display: none;"></video>
-        
+        <header>
+            <div class="brand">✨ Kamera Seru</div>
+            <h1>Kamera Seru 📸</h1>
+            <p class="subtitle">Aplikasi webcam langsung di browser dengan filter, galeri otomatis, dan gaya foto kreatif untuk semua momen.</p>
+            <div class="hero-cards">
+                <div class="hero-card"><strong>Filter Instan</strong><span>Pilih dari puluhan mode foto langsung, mulai dari retro klasik hingga neon penuh gaya.</span></div>
+                <div class="hero-card"><strong>Galeri Online</strong><span>Setiap jepretan langsung masuk galeri, jadi kamu bisa melihat hasil dengan cepat.</span></div>
+                <div class="hero-card"><strong>Tanpa Instalasi</strong><span>Cukup buka browser dan izinkan kamera, semua berjalan tanpa aplikasi tambahan.</span></div>
+                <div class="hero-card"><strong>Mudah Digunakan</strong><span>Desain sederhana untuk siapa saja, dari pemula hingga creator yang mau seru-seruan.</span></div>
+            </div>
+        </header>
+
         <div class="camera-wrapper">
+            <div class="camera-label">Live Camera</div>
+            <div class="status-bar"><span id="status-text">Mencari kamera...</span></div>
+            <video id="video" autoplay playsinline style="display: none;"></video>
             <canvas id="canvas" width="640" height="480"></canvas>
         </div>
-        
+
         <div class="controls">
             <select id="effect-selector">
                 <option value="none">Normal</option>
@@ -143,14 +378,56 @@
                 <option value="saturate(300%)">Super Berwarna</option>
                 <option value="blur(5px)">Misterius (Blur)</option>
                 <option value="sepia(100%) hue-rotate(190deg) saturate(200%)">Retro Sci-Fi</option>
+                <option value="sepia(80%) contrast(120%)">Vintage Elegan</option>
+                <option value="brightness(110%) saturate(200%) hue-rotate(15deg)">Sunset Hangat</option>
+                <option value="contrast(150%) saturate(140%)">Drama Kontras</option>
+                <option value="drop-shadow(0 0 8px rgba(255,77,119,0.45))">Glow Pop</option>
             </select>
             <button id="snap-btn">Ambil Foto!</button>
+            <button class="secondary" id="reset-btn">Reset Efek</button>
+            <button class="secondary" id="download-btn">Unduh Foto</button>
+        </div>
+
+        <div class="panel">
+            <section class="panel-left">
+                <h2>Cara Pakai Cepat</h2>
+                <div class="steps">
+                    <div class="step"><strong>1. Izinkan Kamera</strong> Klik "Allow" ketika browser meminta akses kamera.</div>
+                    <div class="step"><strong>2. Pilih Efek</strong> Coba berbagai filter untuk lihat mana yang paling cocok.</div>
+                    <div class="step"><strong>3. Ambil Foto</strong> Tekan tombol Ambil Foto, lalu foto langsung muncul di galeri.</div>
+                    <div class="step"><strong>4. Simpan atau Bagikan</strong> Tekan Unduh Foto untuk menyimpan ke perangkatmu.</div>
+                </div>
+            </section>
+            <section class="panel-right">
+                <h2>Tips Seru</h2>
+                <ul class="tips">
+                    <li>Gunakan pencahayaan lembut untuk efek foto lebih jelas.</li>
+                    <li>Coba mode neon untuk tampilan konten sosial media yang hidup.</li>
+                    <li>Ambil foto dari sudut berbeda untuk hasil lebih dramatis.</li>
+                    <li>Gunakan background gelap agar filter terlihat lebih kuat.</li>
+                    <li>Buat momen seru dengan teman, lalu simpan semua di galeri.</li>
+                </ul>
+            </section>
+        </div>
+
+        <div class="feature-grid">
+            <div class="feature-card"><h3>Efek Keren</h3><p>Tidak hanya hitam putih, ada sepia, neon, glow, hingga filter sci-fi untuk tampilan modern.</p></div>
+            <div class="feature-card"><h3>Preview Real-Time</h3><p>Setiap perubahan efek langsung terlihat di layar sebelum kamu mengambil foto.</p></div>
+            <div class="feature-card"><h3>Galeri Instan</h3><p>Semua foto baru otomatis muncul di galeri, jadi kamu tidak perlu mencari hasilnya lagi.</p></div>
+            <div class="feature-card"><h3>Mobile Friendly</h3><p>Desain responsif cocok untuk layar HP dan desktop, mudah dipakai di mana saja.</p></div>
         </div>
 
         <div class="gallery-container">
             <h3>Galeri Fotomu</h3>
             <div class="gallery" id="gallery">
-                </div>
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='168' height='118'%3E%3Crect width='100%25' height='100%25' fill='%23212a3b'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23ff4d77' font-family='Segoe UI' font-size='16'%3EContoh 1%3C/text%3E%3C/svg%3E" alt="Contoh 1">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='168' height='118'%3E%3Crect width='100%25' height='100%25' fill='%23292f40'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23ffb3c7' font-family='Segoe UI' font-size='16'%3EContoh 2%3C/text%3E%3C/svg%3E" alt="Contoh 2">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='168' height='118'%3E%3Crect width='100%25' height='100%25' fill='%23111a28'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23ff7aa5' font-family='Segoe UI' font-size='16'%3ESiap Foto%3C/text%3E%3C/svg%3E" alt="Contoh 3">
+            </div>
+        </div>
+
+        <div class="promo-strip">
+            <p>Gunakan Kamera Seru untuk konten TikTok, Instagram, atau sekadar menyimpan momen lucu. Semua bisa dilakukan langsung di browser tanpa instalasi tambahan.</p>
         </div>
     </div>
 
@@ -160,65 +437,80 @@
         const ctx = canvas.getContext('2d');
         const effectSelector = document.getElementById('effect-selector');
         const snapBtn = document.getElementById('snap-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        const statusText = document.getElementById('status-text');
         const gallery = document.getElementById('gallery');
 
         let currentEffect = 'none';
 
-        // 1. Meminta izin akses kamera
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+        function updateStatus(message) {
+            statusText.textContent = message;
+        }
+
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
             .then(stream => {
                 video.srcObject = stream;
                 video.play();
-                drawToCanvas(); // Mulai menggambar ke canvas
+                updateStatus('Kamera aktif, pilih efek dan ambil foto!');
+                drawToCanvas();
             })
             .catch(err => {
-                console.error("Kamera tidak dapat diakses:", err);
-                alert("Tolong izinkan akses kamera pada browser Anda untuk menggunakan website ini.");
+                console.error('Kamera tidak dapat diakses:', err);
+                updateStatus('Kamera tidak tersedia');
+                alert('Tolong izinkan akses kamera pada browser Anda untuk menggunakan website ini.');
             });
 
-        // 2. Mengganti efek saat dropdown dipilih
         effectSelector.addEventListener('change', (e) => {
             currentEffect = e.target.value;
+            updateStatus('Efek dipilih: ' + effectSelector.options[effectSelector.selectedIndex].text);
         });
 
-        // 3. Menggambar video ke canvas terus menerus (60fps)
+        resetBtn.addEventListener('click', () => {
+            currentEffect = 'none';
+            effectSelector.value = 'none';
+            updateStatus('Efek direset ke normal');
+        });
+
+        snapBtn.addEventListener('click', () => {
+            capturePhoto(false);
+        });
+
+        downloadBtn.addEventListener('click', () => {
+            capturePhoto(true);
+        });
+
         function drawToCanvas() {
             if (video.readyState === video.HAVE_ENOUGH_DATA) {
-                // Balik gambar agar berfungsi seperti cermin (mirror)
                 ctx.save();
                 ctx.translate(canvas.width, 0);
                 ctx.scale(-1, 1);
-                
-                // Aplikasikan efek CSS Filters langsung ke kanvas
                 ctx.filter = currentEffect;
                 ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                
                 ctx.restore();
             }
-            // Ulangi fungsi ini secara rekursif
             requestAnimationFrame(drawToCanvas);
         }
 
-        // 4. Proses pengambilan foto
-        snapBtn.addEventListener('click', () => {
-            // Memberikan efek "Flash" sederhana pada kanvas
+        function capturePhoto(download) {
             canvas.style.opacity = '0';
-            setTimeout(() => { canvas.style.opacity = '1'; }, 100);
+            setTimeout(() => { canvas.style.opacity = '1'; }, 120);
 
-            // Mengonversi kanvas saat ini menjadi format gambar (PNG)
             const dataURL = canvas.toDataURL('image/png');
-            
-            // Menampilkan gambar di area galeri bawah
             const imgElement = document.createElement('img');
             imgElement.src = dataURL;
             gallery.prepend(imgElement);
 
-            // (Opsional) Mengunduh gambar secara otomatis ke laptop/HP pengguna
-            const downloadLink = document.createElement('a');
-            downloadLink.download = 'Momen-Seru-' + new Date().getTime() + '.png';
-            downloadLink.href = dataURL;
-            downloadLink.click();
-        });
+            if (download) {
+                const downloadLink = document.createElement('a');
+                downloadLink.download = 'Momen-Seru-' + new Date().getTime() + '.png';
+                downloadLink.href = dataURL;
+                downloadLink.click();
+                updateStatus('Foto diunduh dan tersimpan di perangkat');
+            } else {
+                updateStatus('Foto ditambahkan ke galeri');
+            }
+        }
     </script>
 </body>
 </html>
